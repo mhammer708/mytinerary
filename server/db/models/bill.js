@@ -41,6 +41,7 @@ const Bill = db.define('bill', {
   currency: {
     type: Sequelize.ENUM('USD', 'EUR'),
     allowNull: false,
+    defaultValue: 'USD',
   },
   miscCategory: {
     type: Sequelize.ENUM('Fee', 'Transport', 'Equipment', 'Other'),

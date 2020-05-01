@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('../server/db')
-const {User, Place, Plan} = require('../server/db/models')
+const {User, Place, Plan, Trip, Bill} = require('../server/db/models')
 
 const users = [
   {
@@ -47,7 +47,8 @@ const doPlans = trips.map((trip, ind) => {
     duration: 30,
     activity: 'Do',
     description: 'Walking Tour',
-    placeId: ind + 5,
+    placeId: ind + 6,
+    tripId: ind + 1,
   }
 })
 
@@ -64,7 +65,8 @@ const eatPlans = trips.map((trip, ind) => {
     duration: 90,
     activity: 'Do',
     description: 'Lunch',
-    placeId: ind,
+    placeId: ind + 6,
+    tripId: ind + 1,
   }
 })
 
@@ -82,7 +84,20 @@ const sleepPlans = trips.map((trip, ind) => {
     duration: 1200,
     activity: 'Sleep',
     description: 'Hotel',
-    placeId: ind,
+    placeId: ind + 6,
+    tripId: ind + 1,
+  }
+})
+
+const doBills = sleepPlans.map((trip, ind) => {
+  return {
+    userId: 1,
+    tripId: ind + 1,
+    planId: ind + 1,
+    price: 20 * (ind + 1),
+    evenSplit: true,
+    paymentStatus: false,
+    refundDate: null,
   }
 })
 
@@ -92,12 +107,14 @@ async function seed() {
 
   await User.bulkCreate(users)
   await Place.bulkCreate(tripPlaces)
+  await Trip.bulkCreate(trips)
   await Place.bulkCreate(doPlaces)
   await Plan.bulkCreate(doPlans)
   await Place.bulkCreate(eatPlaces)
   await Plan.bulkCreate(eatPlans)
   await Place.bulkCreate(sleepPlaces)
   await Plan.bulkCreate(sleepPlans)
+  await Bill.bulkCreate(doBills)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)
