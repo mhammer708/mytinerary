@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import UpdateRow from './update-row'
 import {fetchMyTransactions} from '../store/transactions'
 import {fetchBills} from '../store/bills'
 import {fetchPlans} from '../store/plans'
@@ -8,12 +9,15 @@ import {Button, Table} from 'antd'
 
 const Expenses = (props) => {
   const [tableData, setData] = useState()
+  // const {tripId} = props.match.params
+  const tripId = 1
 
   const columns = [
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      width: '70%',
       // render: (value, row, index) => {
       //   const obj = {
       //     children: value,
@@ -32,11 +36,17 @@ const Expenses = (props) => {
       title: 'You',
       dataIndex: 'you',
       key: 'you',
+      width: '15%',
+      // eslint-disable-next-line react/display-name
+      render: (text, record) => (
+        <UpdateRow tripId={tripId} record={record} text={text} />
+      ),
     },
     {
       title: 'Group',
       dataIndex: 'group',
       key: 'group',
+      width: '15%',
     },
   ]
 
@@ -77,34 +87,39 @@ const Expenses = (props) => {
         table.push({
           key: plan.id,
           description: plan.description,
-          you: props.transactions
-            .filter(
-              (transaction) =>
-                transaction.bill.planId === plan.id &&
-                transaction.type === 'debit'
-            )
-            .map((transaction) => Number.parseFloat(transaction.amount))
-            .reduce((accum, currVal) => accum + currVal, 0),
-          group: props.bills
-            .filter((bill) => bill.planId === plan.id)
-            .map((bill) => Number.parseFloat(bill.price))
-            .reduce((accum, currVal) => accum + currVal, 0),
+          you:
+            '$ ' +
+            props.transactions
+              .filter(
+                (transaction) =>
+                  transaction.bill.planId === plan.id &&
+                  transaction.type === 'debit'
+              )
+              .map((transaction) => Number.parseFloat(transaction.amount))
+              .reduce((accum, currVal) => accum + currVal, 0)
+              .toFixed(2),
+          group:
+            '$ ' +
+            props.bills
+              .filter((bill) => bill.planId === plan.id)
+              .map((bill) => Number.parseFloat(bill.price))
+              .reduce((accum, currVal) => accum + currVal, 0)
+              .toFixed(2),
         })
       })
-      console.log('hi')
       setData(table)
     }
   }
 
   useEffect(() => {
-    props.getPlans(1)
+    props.getPlans(tripId)
   }, [])
   useEffect(() => {
     // const tripId = props.match.params.id
-    props.getBills(1)
+    props.getBills(tripId)
   }, [])
   useEffect(() => {
-    props.getMyTransactions(1)
+    props.getMyTransactions(tripId)
   }, [])
 
   useEffect(() => {
@@ -113,7 +128,6 @@ const Expenses = (props) => {
 
   return (
     <div>
-      <h1>Expenses</h1>
       <Table dataSource={tableData} columns={columns} />
     </div>
   )

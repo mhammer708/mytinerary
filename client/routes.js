@@ -27,8 +27,14 @@ class Routes extends Component {
           <Switch>
             {/* Routes placed here are only available after logging in */}
             <Route path="/home" component={UserHome} />
-            <Route path="/trips/:tripId/expenses" component={Expenses} />
-            <Route path="/trips/:tripId" component={Dashboard} />
+            <Route
+              path="/trips/:tripId/expenses"
+              render={(props) => <Expenses {...props} />}
+            />
+            <Route
+              path="/trips/:tripId"
+              render={(props) => <Dashboard {...props} />}
+            />
           </Switch>
         )}
         {/* Displays our Login component as a fallback */}
