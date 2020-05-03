@@ -15,7 +15,8 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:tripId', async (req, res, next) => {
   try {
-    const bills = await Bill.findByPk(req.params.tripId, {
+    const bills = await Bill.findAll({
+      where: {tripId: req.params.tripId},
       include: [{model: Trip}, {model: Plan}],
     })
     res.send(bills)

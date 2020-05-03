@@ -19,3 +19,11 @@ form div {
   margin: 1em;
   display: inline-block;
 }
+
+#header {
+  background-color: #f6bd60;
+}
+
+#footer {
+  background-color: cornsilk;
+}

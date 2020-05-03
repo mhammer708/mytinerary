@@ -34,7 +34,7 @@ const Bill = db.define('bill', {
     allowNull: true,
   },
   type: {
-    type: Sequelize.ENUM('Cash', 'Credit'),
+    type: Sequelize.ENUM('Cash', 'Card'),
     allowNull: false,
     defaultValue: 'Credit',
   },

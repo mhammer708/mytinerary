@@ -9,12 +9,9 @@ const Transaction = db.define('transaction', {
       notEmpty: true,
     },
   },
-  start: {
-    type: Sequelize.TEXT,
+  type: {
+    type: Sequelize.ENUM('debit', 'credit'),
     allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
   },
 })
 

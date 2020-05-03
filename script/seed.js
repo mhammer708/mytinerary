@@ -1,20 +1,52 @@
 'use strict'
 
 const db = require('../server/db')
-const {User, Place, Plan, Trip, Bill} = require('../server/db/models')
+const {
+  User,
+  Group,
+  Transaction,
+  Place,
+  Plan,
+  Trip,
+  Bill,
+} = require('../server/db/models')
 
 const users = [
   {
     email: 'cody@email.com',
     password: '123',
     username: 'cody23',
-    nickname: 'cody',
+    nickname: 'Cody',
   },
   {
     email: 'murphy@email.com',
     password: '123',
     username: 'murphy6',
-    nickname: 'murph',
+    nickname: 'Murph',
+  },
+  {
+    email: 'joe@email.com',
+    password: '123',
+    username: 'joey22',
+    nickname: 'Joe',
+  },
+  {
+    email: 'jill@email.com',
+    password: '123',
+    username: 'jilly2',
+    nickname: 'Jill',
+  },
+  {
+    email: 'sally@email.com',
+    password: '123',
+    username: 'sally88',
+    nickname: 'Sally',
+  },
+  {
+    email: 'jenny@email.com',
+    password: '123',
+    username: 'jen66',
+    nickname: 'Jen',
   },
 ]
 
@@ -32,6 +64,17 @@ const trips = [
   {start: '2023-01-01', duration: 5, placeId: 3},
   {start: '2024-06-01', duration: 6, placeId: 4},
   {start: '2025-02-01', duration: 7, placeId: 5},
+]
+
+const groups = [
+  {userId: 1, tripId: 1, groupName: 'Best Buds'},
+  {userId: 2, tripId: 1, groupName: 'Best Buds'},
+  {userId: 3, tripId: 1, groupName: 'Best Buds'},
+  {userId: 4, tripId: 1, groupName: 'Best Buds'},
+  {userId: 5, tripId: 1, groupName: 'Best Buds'},
+  {userId: 1, tripId: 2, groupName: 'Best Buds'},
+  {userId: 2, tripId: 2, groupName: 'Best Buds'},
+  {userId: 3, tripId: 2, groupName: 'Best Buds'},
 ]
 
 const doPlaces = tripPlaces.map((place) => {
@@ -89,15 +132,46 @@ const sleepPlans = trips.map((trip, ind) => {
   }
 })
 
-const doBills = sleepPlans.map((trip, ind) => {
+const sleepBills = sleepPlans.map((trip, ind) => {
   return {
-    userId: 1,
     tripId: ind + 1,
     planId: ind + 1,
     price: 20 * (ind + 1),
     evenSplit: true,
     paymentStatus: false,
     refundDate: null,
+  }
+})
+
+const sleepTransactionDebits = sleepBills
+  .map((bill, ind) => {
+    return {
+      userId: ind + 1,
+      billId: ind + 1,
+      amount: bill.price / 2,
+      type: 'debit',
+      tripId: bill.tripId,
+    }
+  })
+  .concat(
+    sleepBills.map((bill, ind) => {
+      return {
+        userId: sleepBills.length - ind,
+        billId: ind + 1,
+        amount: bill.price / 2,
+        type: 'debit',
+        tripId: bill.tripId,
+      }
+    })
+  )
+
+const sleepTransactionCredits = sleepBills.map((bill, ind) => {
+  return {
+    userId: ind + 1,
+    billId: ind + 1,
+    amount: bill.price * -1,
+    type: 'credit',
+    tripId: bill.tripId,
   }
 })
 
@@ -108,13 +182,16 @@ async function seed() {
   await User.bulkCreate(users)
   await Place.bulkCreate(tripPlaces)
   await Trip.bulkCreate(trips)
+  await Group.bulkCreate(groups)
   await Place.bulkCreate(doPlaces)
   await Plan.bulkCreate(doPlans)
   await Place.bulkCreate(eatPlaces)
   await Plan.bulkCreate(eatPlans)
   await Place.bulkCreate(sleepPlaces)
   await Plan.bulkCreate(sleepPlans)
-  await Bill.bulkCreate(doBills)
+  await Bill.bulkCreate(sleepBills)
+  await Transaction.bulkCreate(sleepTransactionDebits)
+  await Transaction.bulkCreate(sleepTransactionCredits)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)

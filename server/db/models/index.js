@@ -23,6 +23,7 @@ Trip.belongsToMany(User, {through: Group})
 Trip.belongsTo(Place)
 Trip.hasMany(Plan)
 Trip.hasMany(Bill)
+Trip.hasMany(Transaction)
 
 Plan.hasMany(Bill)
 Plan.belongsTo(Place)
@@ -44,6 +45,7 @@ Bill.belongsTo(Trip)
 
 Transaction.belongsTo(User)
 Transaction.belongsTo(Bill)
+Transaction.belongsTo(Trip)
 
 /**
  * We'll export all of our models here, so that any time a module needs a model,
