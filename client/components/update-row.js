@@ -1,12 +1,14 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Modal, Form, Input, Select, Button} from 'antd'
+import {Modal, Form, Input, Select, Button, Switch} from 'antd'
 import {fetchBills, postBill} from '../store/bills'
 
 class UpdateRow extends React.Component {
   constructor() {
     super()
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleOk = this.handleOk.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
   }
 
   state = {visible: false}
@@ -17,31 +19,26 @@ class UpdateRow extends React.Component {
     })
   }
 
-  handleSubmit(value) {
-    const newBill = {
-      price: value.amount,
-      note: value.memo,
-    }
+  handleSubmit(formData) {
+    this.props.postBill({formData}, this.props.record.key, this.props.tripId)
 
-    this.props.postBill({value}, this.props.tripId)
-
-    console.log('Success:', value)
+    console.log('Success:', formData)
   }
 
-  // handleOk = (e) => {
-  //   console.log(e)
+  handleOk = (e) => {
+    console.log(e)
 
-  //   this.setState({
-  //     visible: false,
-  //   })
-  // }
+    this.setState({
+      visible: false,
+    })
+  }
 
-  // handleCancel = (e) => {
-  //   console.log(e)
-  //   this.setState({
-  //     visible: false,
-  //   })
-  // }
+  handleCancel = (e) => {
+    console.log(e)
+    this.setState({
+      visible: false,
+    })
+  }
 
   componentDidMount() {
     this.props.getBills(this.props.tripId)
@@ -58,8 +55,10 @@ class UpdateRow extends React.Component {
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          // width={800}
+          className="modal"
         >
-          <div>
+          <div className="center">
             <Form
               // labelCol={{span: 4}}
               // wrapperCol={{span: 14}}
@@ -68,14 +67,14 @@ class UpdateRow extends React.Component {
               size="small"
               onFinish={this.handleSubmit}
             >
-              <Form.Item label="Plan" name="plan">
+              <Form.Item name="plan">
                 <Select>
                   {this.props.bills
                     .filter((bill) => bill.planId === this.props.record.key)
                     .map((bill) => {
                       return (
                         <Select.Option value={bill.id} key={bill.id}>
-                          {bill.plan.description}
+                          {bill.plan && bill.plan.description}
                           {bill.note}
                         </Select.Option>
                       )
@@ -83,16 +82,25 @@ class UpdateRow extends React.Component {
                   <Select.Option value="new">New Bill</Select.Option>
                 </Select>
               </Form.Item>
-              <Form.Item label="Amount" name="amount">
-                <Input />
+              <Form.Item id="form" name="amount">
+                <Input placeholder="How Much?" />
               </Form.Item>
-              <Form.Item label="Payer" name="payer">
-                <Input />
+              <Form.Item id="form" name="payer">
+                <Input placeholder="Who Paid?" />
               </Form.Item>
-              <Form.Item label="Memo" name="memo">
-                <Input />
+              <Form.Item id="form" name="memo">
+                <Input placeholder="What is it?" />
               </Form.Item>
-              <Form.Item>
+              <Form.Item
+                name="switch"
+                label="Even Split?"
+                defaultChecked
+                valuePropName="checked"
+                id="form"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item id="form">
                 <Button type="primary" htmlType="submit">
                   Submit
                 </Button>
@@ -114,7 +122,8 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
   return {
     getBills: (tripId) => dispatch(fetchBills(tripId)),
-    postBill: (bill, tripId) => dispatch(postBill(bill, tripId)),
+    postBill: (formData, planId, tripId) =>
+      dispatch(postBill(formData, planId, tripId)),
     // getMyTransactions: (tripId) => dispatch(fetchMyTransactions(tripId)),
     // getPlans: (tripId) => dispatch(fetchPlans(tripId)),
   }

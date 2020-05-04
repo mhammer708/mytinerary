@@ -28,17 +28,19 @@ router.get('/:tripId', async (req, res, next) => {
 router.post('/:tripId', async (req, res, next) => {
   try {
     const billOwner = await User.findOne({
-      where: {username: req.body.value.payer},
+      where: {username: req.body.formData.payer},
     })
     const billPayees = await Group.findAll({
       where: {tripId: req.params.tripId},
     })
     const newBill = await Bill.create({
-      price: req.body.value.amount,
-      note: req.body.value.memo,
+      price: req.body.formData.amount,
+      note: req.body.formData.memo,
+      tripId: req.params.tripId,
+      planId: req.body.planId,
     })
     await newBill.createTransaction({
-      amount: req.body.value.amount * -1,
+      amount: req.body.formData.amount * -1,
       type: 'credit',
       userId: billOwner.id,
       tripId: req.params.tripId,
@@ -48,7 +50,7 @@ router.post('/:tripId', async (req, res, next) => {
       return Promise.all(
         billPayees.map((billPayee) =>
           newBill.createTransaction({
-            amount: req.body.value.amount / billPayees.length,
+            amount: req.body.formData.amount / billPayees.length,
             type: 'debit',
             userId: billPayee.userId,
             tripId: req.params.tripId,

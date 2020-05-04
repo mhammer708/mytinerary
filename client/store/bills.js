@@ -26,10 +26,13 @@ export const fetchBills = (tripId) => {
   }
 }
 
-export const postBill = (bill, tripId) => {
+export const postBill = (formData, planId, tripId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post(`/api/bills/${tripId}`, bill)
+      formData.planId = planId
+      const response = await axios.post(`/api/bills/${tripId}`, formData)
+      console.log('planId', planId)
+      console.log('formData', formData)
       const newBill = response.data
       dispatch(gotNewBill(newBill))
     } catch (err) {

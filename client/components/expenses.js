@@ -5,7 +5,8 @@ import UpdateRow from './update-row'
 import {fetchMyTransactions} from '../store/transactions'
 import {fetchBills} from '../store/bills'
 import {fetchPlans} from '../store/plans'
-import {Button, Table} from 'antd'
+import {Button, Table, Typography} from 'antd'
+const {Text} = Typography
 
 const Expenses = (props) => {
   const [tableData, setData] = useState()
@@ -128,7 +129,37 @@ const Expenses = (props) => {
 
   return (
     <div>
-      <Table dataSource={tableData} columns={columns} />
+      <Table
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+        bordered
+        summary={(pageData) => {
+          if (pageData) {
+            let totalYou = 0
+            let totalGroup = 0
+
+            pageData.forEach(({you, group}) => {
+              totalYou += Number.parseFloat(you.slice(2))
+              totalGroup += Number.parseFloat(group.slice(2))
+            })
+
+            return (
+              <>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>Total</Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text>$ {totalYou}</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text>$ {totalGroup}</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </>
+            )
+          }
+        }}
+      />
     </div>
   )
 }

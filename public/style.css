@@ -20,6 +20,20 @@ form div {
   display: inline-block;
 }
 
+.modal {
+  width: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#form {
+  margin: 5px;
+}
+
 #header {
   background-color: #f6bd60;
 }
