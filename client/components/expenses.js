@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import UpdateRow from './update-row'
+import SettleUp from './settle-up'
 import AddRow from './add-row'
 import {fetchMyTransactions} from '../store/transactions'
 import {fetchBills} from '../store/bills'
@@ -12,7 +13,7 @@ const {Text} = Typography
 const Expenses = (props) => {
   const [tableData, setTableData] = useState()
   // const {tripId} = props.match.params
-  const tripId = 1
+  const tripId = props.tripId
 
   const columns = [
     {
@@ -20,19 +21,6 @@ const Expenses = (props) => {
       dataIndex: 'description',
       key: 'description',
       width: '70%',
-      // render: (value, row, index) => {
-      //   const obj = {
-      //     children: value,
-      //     props: {},
-      //   };
-      //   if (value.slice(0,3) === 'Day') {
-      //     return <a>{text}</a>;
-      //   }
-      //   return {
-      //     children: <a>{text}</a>,
-      //     props: {
-      //       colSpan: 5,
-      //     },
     },
     {
       title: 'You',
@@ -51,31 +39,6 @@ const Expenses = (props) => {
       width: '15%',
     },
   ]
-
-  // const youCalc = (planId) => {
-  //   const foo = props.transactions
-  //     .filter(
-  //       (transaction) =>
-  //         transaction.bill.planId === planId && transaction.type === 'debit'
-  //     )
-  //     .map((transaction) => Number.parseFloat(transaction.amount))
-  //     .reduce((accum, currVal) => accum + currVal, 0)
-
-  //   // const planBills = props.bills.filter((bill) => bill.planId === planId)
-  //   // // 1 , 2 , 3
-  //   // const planTransactions = planBills.map((bill) =>
-  //   //   props.transactions.filter(
-  //   //     (transaction) => transaction.billId === bill.id
-  //   //   )
-  //   // )
-
-  //   console.log('bills', props.bills)
-  //   console.log('foo', foo)
-  //   // console.log('billIds', planBills)
-  //   // console.log('planTrans', planTransactions)
-
-  //   // return planTransactions.map().reduce((accum, currVal) => accum + currVal)
-  // }
 
   const dataCalc = () => {
     if (props.plans) {
@@ -132,8 +95,14 @@ const Expenses = (props) => {
         dataSource={tableData}
         pagination={false}
         bordered
-        title={() => 'header'}
-        footer={() => <AddRow tripId={tripId} />}
+        footer={() => {
+          return (
+            <div>
+              <AddRow tripId={tripId} />
+              <SettleUp tripId={tripId} />
+            </div>
+          )
+        }}
         summary={(pageData) => {
           if (pageData) {
             let totalYou = 0

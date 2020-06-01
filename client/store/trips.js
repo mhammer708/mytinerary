@@ -28,10 +28,10 @@ export const fetchTrip = (tripId) => {
   }
 }
 
-export const fetchTrips = (userId) => {
+export const fetchTrips = () => {
   return async (dispatch) => {
     try {
-      const {data} = await axios.get(`/api/trips`, userId)
+      const {data} = await axios.get(`/api/trips`)
       dispatch(setTrips(data))
     } catch (err) {
       console.log(err)

@@ -91,13 +91,14 @@ class AddRow extends React.Component {
           onCancel={this.handleCancel}
           // width={800}
           className="modal"
+          footer={null}
         >
           <div className="center">
             <Form
               // labelCol={{span: 4}}
               // wrapperCol={{span: 14}}
               layout="horizontal"
-              initialValues={{plan: '1', category: 'Do', duration: '30'}}
+              initialValues={{activity: 'Do', duration: '30'}}
               size="small"
               onFinish={this.handleSubmit}
             >
@@ -105,10 +106,7 @@ class AddRow extends React.Component {
                 <Select>
                   {this.daysArr.map((day) => {
                     return (
-                      <Select.Option
-                        value={this.props.trips[0].start.slice(0, 10)}
-                        key={day}
-                      >
+                      <Select.Option value={day.slice(0, 10)} key={day}>
                         {day}
                       </Select.Option>
                     )
@@ -124,7 +122,7 @@ class AddRow extends React.Component {
               </Form.Item>
               <Form.Item id="form" name="duration">
                 <Select>
-                  <Select.Option value="30">.5 hour</Select.Option>
+                  <Select.Option value="30">30 minutes</Select.Option>
                   <Select.Option value="60">1 hour</Select.Option>
                   <Select.Option value="90">1.5 hours</Select.Option>
                   {/* <Select.Option value={120}>2 hours</Select.Option>

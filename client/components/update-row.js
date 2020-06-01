@@ -12,15 +12,15 @@ import {
   Col,
 } from 'antd'
 import {fetchBills, postBill} from '../store/bills'
+import {fetchTrip} from '../store/trips'
 
 class UpdateRow extends React.Component {
   constructor() {
     super()
-    this.switchFlag = false
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleOk = this.handleOk.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
-    this.splitSwitch = this.splitSwitch.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   state = {visible: false}
@@ -31,15 +31,11 @@ class UpdateRow extends React.Component {
     })
   }
 
-  splitSwitch(checked) {
-    this.switchFlag = !this.switchFlag
-    console.log(`switch to ${checked}`)
-    console.log(this.switchFlag)
-  }
-
   handleSubmit(formData) {
     this.props.postBill({formData}, this.props.record.key, this.props.tripId)
-
+    this.setState({
+      visible: false,
+    })
     console.log('Success:', formData)
   }
 
@@ -58,8 +54,14 @@ class UpdateRow extends React.Component {
     })
   }
 
+  handleChange = (e) => {
+    const selectedBill = this.props.bills.filter((bill) => bill.id === e.value)
+    console.log(selectedBill)
+  }
+
   componentDidMount() {
     this.props.getBills(this.props.tripId)
+    this.props.getTrip(this.props.tripId)
   }
 
   render() {
@@ -75,6 +77,7 @@ class UpdateRow extends React.Component {
           onCancel={this.handleCancel}
           // width={800}
           className="modal"
+          footer={null}
         >
           <div className="center">
             <Form
@@ -86,7 +89,7 @@ class UpdateRow extends React.Component {
               onFinish={this.handleSubmit}
             >
               <Form.Item name="plan">
-                <Select>
+                <Select onChange={this.handleChange}>
                   {this.props.bills
                     .filter((bill) => bill.planId === this.props.record.key)
                     .map((bill) => {
@@ -104,42 +107,41 @@ class UpdateRow extends React.Component {
                 <Input placeholder="How Much?" />
               </Form.Item>
               <Form.Item id="form" name="payer">
-                <Input placeholder="Who Paid?" />
+                <Select>
+                  {this.props.trips[0] &&
+                    this.props.trips[0].users.map((user) => {
+                      return (
+                        <Select.Option key={user.id} value={user.id}>
+                          {user.nickname}
+                        </Select.Option>
+                      )
+                    })}
+                </Select>
               </Form.Item>
               <Form.Item id="form" name="memo">
                 <Input placeholder="What is it?" />
               </Form.Item>
-              <Form.Item
-                name="switch"
-                label="Even Split?"
-                valuePropName="checked"
-                id="form"
-              >
-                <Switch onChange={this.splitSwitch} />
+
+              <Form.Item label="Who was involved?" name="payees">
+                <Checkbox.Group>
+                  <Row>
+                    {this.props.trips[0] &&
+                      this.props.trips[0].users.map((user) => {
+                        return (
+                          <Col key={user.id} keyspan={8}>
+                            <Checkbox
+                              value={user.id}
+                              style={{lineHeight: '32px'}}
+                            >
+                              {user.nickname}
+                            </Checkbox>
+                          </Col>
+                        )
+                      })}
+                  </Row>
+                </Checkbox.Group>
               </Form.Item>
-              {this.switchFlag ? (
-                <Form.Item name="checkbox-group">
-                  <Checkbox.Group>
-                    <Row>
-                      <Col span={8}>
-                        <Checkbox value="A" style={{lineHeight: '32px'}}>
-                          John
-                        </Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="B" style={{lineHeight: '32px'}}>
-                          Paul
-                        </Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="C" style={{lineHeight: '32px'}}>
-                          Kim
-                        </Checkbox>
-                      </Col>
-                    </Row>
-                  </Checkbox.Group>
-                </Form.Item>
-              ) : null}
+
               <Form.Item className="center">
                 <Button type="primary" htmlType="submit">
                   Submit
@@ -156,6 +158,8 @@ class UpdateRow extends React.Component {
 const mapState = (state) => {
   return {
     bills: state.bills,
+    trips: state.trips,
+    trip: state.trip,
   }
 }
 
@@ -164,6 +168,7 @@ const mapDispatch = (dispatch) => {
     getBills: (tripId) => dispatch(fetchBills(tripId)),
     postBill: (formData, planId, tripId) =>
       dispatch(postBill(formData, planId, tripId)),
+    getTrip: (tripId) => dispatch(fetchTrip(tripId)),
     // getMyTransactions: (tripId) => dispatch(fetchMyTransactions(tripId)),
     // getPlans: (tripId) => dispatch(fetchPlans(tripId)),
   }

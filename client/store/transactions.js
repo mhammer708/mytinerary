@@ -50,6 +50,7 @@ export const postTransaction = (transaction, tripId) => {
         transaction
       )
       const newTransaction = response.data
+
       dispatch(gotNewTransaction(newTransaction))
     } catch (err) {
       console.log(err)

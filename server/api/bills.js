@@ -25,14 +25,51 @@ router.get('/:tripId', async (req, res, next) => {
   }
 })
 
+// router.post('/:tripId', async (req, res, next) => {
+//   try {
+//     const billOwner = await User.findOne({
+//       where: {username: req.body.formData.payer},
+//     })
+//     const billPayees = await Group.findAll({
+//       where: {tripId: req.params.tripId},
+//     })
+//     const newBill = await Bill.create({
+//       price: req.body.formData.amount,
+//       note: req.body.formData.memo,
+//       tripId: req.params.tripId,
+//       planId: req.body.planId,
+//     })
+//     await newBill.createTransaction({
+//       amount: req.body.formData.amount * -1,
+//       type: 'credit',
+//       userId: billOwner.id,
+//       tripId: req.params.tripId,
+//     })
+
+//     const createDebits = () => {
+//       return Promise.all(
+//         billPayees.map((billPayee) =>
+//           newBill.createTransaction({
+//             amount: req.body.formData.amount / billPayees.length,
+//             type: 'debit',
+//             userId: billPayee.userId,
+//             tripId: req.params.tripId,
+//           })
+//         )
+//       )
+//     }
+//     await createDebits()
+//     // console.log('magic', Object.keys(Bill.prototype))
+//     res.send(newBill)
+//   } catch (err) {
+//     next(err)
+//   }
+// })
+
 router.post('/:tripId', async (req, res, next) => {
   try {
-    const billOwner = await User.findOne({
-      where: {username: req.body.formData.payer},
-    })
-    const billPayees = await Group.findAll({
-      where: {tripId: req.params.tripId},
-    })
+    const billPayees = req.body.formData.payees
+
     const newBill = await Bill.create({
       price: req.body.formData.amount,
       note: req.body.formData.memo,
@@ -42,17 +79,17 @@ router.post('/:tripId', async (req, res, next) => {
     await newBill.createTransaction({
       amount: req.body.formData.amount * -1,
       type: 'credit',
-      userId: billOwner.id,
+      userId: req.body.formData.payer,
       tripId: req.params.tripId,
     })
 
     const createDebits = () => {
       return Promise.all(
-        billPayees.map((billPayee) =>
+        billPayees.map((id) =>
           newBill.createTransaction({
             amount: req.body.formData.amount / billPayees.length,
             type: 'debit',
-            userId: billPayee.userId,
+            userId: id,
             tripId: req.params.tripId,
           })
         )

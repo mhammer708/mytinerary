@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  background-color: #f7ede2;
 }
 
 a {
@@ -24,6 +25,19 @@ nav a {
   width: 100%;
 }
 
+.nav {
+  background-color: #84a59d;
+  text-align: center;
+}
+
+.nav h1 {
+  color: #f7ede2;
+}
+
+#header h2 {
+  color: #f7ede2;
+}
+
 .center {
   display: flex;
   justify-content: center;
@@ -43,7 +57,7 @@ nav a {
 }
 
 #footer {
-  background-color: cornsilk;
+  background-color: #f7ede2;
 }
 
 /* .ant-form-item {
