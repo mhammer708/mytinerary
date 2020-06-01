@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import UpdateRow from './update-row'
+import AddRow from './add-row'
 import {fetchMyTransactions} from '../store/transactions'
 import {fetchBills} from '../store/bills'
 import {fetchPlans} from '../store/plans'
@@ -9,7 +10,7 @@ import {Button, Table, Typography} from 'antd'
 const {Text} = Typography
 
 const Expenses = (props) => {
-  const [tableData, setData] = useState()
+  const [tableData, setTableData] = useState()
   // const {tripId} = props.match.params
   const tripId = 1
 
@@ -83,7 +84,7 @@ const Expenses = (props) => {
         // .filter((bill) => bill.planId === props.plans[0].id)
         .map((bill) => Number.parseFloat(bill.price))
         .reduce((accum, currVal) => accum + currVal, 0)
-      console.log('yooo', foo)
+      console.log('bump', foo)
       props.plans.forEach((plan) => {
         table.push({
           key: plan.id,
@@ -108,19 +109,16 @@ const Expenses = (props) => {
               .toFixed(2),
         })
       })
-      setData(table)
+
+      setTableData(table)
     }
   }
 
   useEffect(() => {
-    props.getPlans(tripId)
-  }, [])
-  useEffect(() => {
     // const tripId = props.match.params.id
-    props.getBills(tripId)
-  }, [])
-  useEffect(() => {
+    props.getPlans(tripId)
     props.getMyTransactions(tripId)
+    props.getBills(tripId)
   }, [])
 
   useEffect(() => {
@@ -134,6 +132,8 @@ const Expenses = (props) => {
         dataSource={tableData}
         pagination={false}
         bordered
+        title={() => 'header'}
+        footer={() => <AddRow tripId={tripId} />}
         summary={(pageData) => {
           if (pageData) {
             let totalYou = 0

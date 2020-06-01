@@ -1,14 +1,26 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Modal, Form, Input, Select, Button, Switch} from 'antd'
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  Button,
+  Switch,
+  Checkbox,
+  Row,
+  Col,
+} from 'antd'
 import {fetchBills, postBill} from '../store/bills'
 
 class UpdateRow extends React.Component {
   constructor() {
     super()
+    this.switchFlag = false
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleOk = this.handleOk.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
+    this.splitSwitch = this.splitSwitch.bind(this)
   }
 
   state = {visible: false}
@@ -17,6 +29,12 @@ class UpdateRow extends React.Component {
     this.setState({
       visible: true,
     })
+  }
+
+  splitSwitch(checked) {
+    this.switchFlag = !this.switchFlag
+    console.log(`switch to ${checked}`)
+    console.log(this.switchFlag)
   }
 
   handleSubmit(formData) {
@@ -62,7 +80,7 @@ class UpdateRow extends React.Component {
             <Form
               // labelCol={{span: 4}}
               // wrapperCol={{span: 14}}
-              // layout="horizontal"
+              layout="horizontal"
               initialValues={{plan: 'new'}}
               size="small"
               onFinish={this.handleSubmit}
@@ -94,13 +112,35 @@ class UpdateRow extends React.Component {
               <Form.Item
                 name="switch"
                 label="Even Split?"
-                defaultChecked
                 valuePropName="checked"
                 id="form"
               >
-                <Switch />
+                <Switch onChange={this.splitSwitch} />
               </Form.Item>
-              <Form.Item id="form">
+              {this.switchFlag ? (
+                <Form.Item name="checkbox-group">
+                  <Checkbox.Group>
+                    <Row>
+                      <Col span={8}>
+                        <Checkbox value="A" style={{lineHeight: '32px'}}>
+                          John
+                        </Checkbox>
+                      </Col>
+                      <Col span={8}>
+                        <Checkbox value="B" style={{lineHeight: '32px'}}>
+                          Paul
+                        </Checkbox>
+                      </Col>
+                      <Col span={8}>
+                        <Checkbox value="C" style={{lineHeight: '32px'}}>
+                          Kim
+                        </Checkbox>
+                      </Col>
+                    </Row>
+                  </Checkbox.Group>
+                </Form.Item>
+              ) : null}
+              <Form.Item className="center">
                 <Button type="primary" htmlType="submit">
                   Submit
                 </Button>

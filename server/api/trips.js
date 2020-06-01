@@ -4,10 +4,12 @@ module.exports = router
 
 router.get('/', async (req, res, next) => {
   try {
-    const plans = await Plan.findAll({
-      include: [{model: Trip}, {model: Place}],
+    const trips = await Trip.findAll({
+      where: {
+        userId: req.body.userId,
+      },
     })
-    res.send(plans)
+    res.send(trips)
   } catch (err) {
     next(err)
   }
@@ -15,11 +17,8 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:tripId', async (req, res, next) => {
   try {
-    const plans = await Plan.findAll({
-      where: {tripId: req.params.tripId},
-      include: [{model: Trip}, {model: Place}],
-    })
-    res.send(plans)
+    const trip = await Trip.findByPk(req.params.tripId, {include: Place})
+    res.send(trip)
   } catch (err) {
     next(err)
   }
@@ -27,8 +26,8 @@ router.get('/:tripId', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const plan = await Plan.create(req.body)
-    res.send(plan)
+    const trip = await Trip.create(req.body)
+    res.send(trip)
   } catch (err) {
     next(err)
   }

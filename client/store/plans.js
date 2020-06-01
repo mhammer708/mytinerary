@@ -29,10 +29,20 @@ export const fetchPlans = (tripId) => {
   }
 }
 
-export const postPlan = (plan, tripId) => {
+export const postPlan = (formData, tripId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post(`/api/plans/${tripId}`, plan)
+      const plan = {
+        description: formData.description,
+        activity: formData.activity,
+        start: formData.day + ' 12:00:00-06',
+        duration: Number(formData.duration),
+        tripId: tripId,
+        placeId: formData.placeId,
+      }
+      console.log('PLAN', plan)
+      console.log('data', formData)
+      const response = await axios.post(`/api/plans`, plan)
       const newPlan = response.data
       dispatch(gotNewPlan(newPlan))
     } catch (err) {
